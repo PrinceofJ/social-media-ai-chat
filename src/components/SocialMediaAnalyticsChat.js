@@ -27,7 +27,7 @@ const SocialMediaAnalyticsChat = ({ userName = "" }) => {
     scrollToBottom();
   }, [messages]);
 
-  const generateResponse = (userMessage) => {
+  const generateResponse = async (userMessage) => {
     const responses = {
       'trending': 'Here are the current trending topics among your tracked influencers:\n\n🔥 **AI & Machine Learning** - 1,250 mentions (+15% growth)\n📈 **Cryptocurrency** - 980 mentions (-5% growth)\n🌱 **Climate Change** - 750 mentions (+8% growth)\n💡 **Tech Innovation** - 650 mentions (+22% growth)\n🏠 **Remote Work** - 420 mentions (+12% growth)\n\nWould you like me to dive deeper into any specific topic?',
       'sentiment': 'Based on the latest sentiment analysis:\n\n😊 **Positive**: 45% (↑ 3% from last week)\n😐 **Neutral**: 35% (↓ 1% from last week)\n😔 **Negative**: 20% (↓ 2% from last week)\n\n**Key Insights:**\n• Overall sentiment is improving across all platforms\n• Tech and innovation posts show highest positivity\n• Climate discussions tend toward negative sentiment\n• Engagement is 23% higher on positive posts',
@@ -45,8 +45,54 @@ const SocialMediaAnalyticsChat = ({ userName = "" }) => {
     } else if (lowerMessage.includes('compare') || lowerMessage.includes('influencer')) {
       return responses.compare;
     }
+    //--------------------------------------
+    //n8n webhook (POST)
+    async function postToWebhook(webhookURL, data) {
+      try {
+        const response = await fetch(webhookURL, {
+          method: 'POST', // Specify the method
+          headers: {
+            'Content-Type': 'application/json', // Specify the content type as JSON
+          },
+          body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log(response.status);
+        if (response.status === 200) {
+          const text = await response.text();
+          console.log('Success! Webhook acknowledged the request with no content.');
+          return text;
+        }
+
+        // Optionally, you can process the response from the webhook
+        const responseData = await response.json();
+        return responseData;
+        
+      } catch (error) {
+        console.error('Error posting to webhook:', error);
+      }
+    }
+    //test and then production webhook
+    const myWebhookURL = 'https://princeofj.app.n8n.cloud/webhook-test/887441b1-2306-485e-8d87-9115c9e563d6';
+    //const myWebhookURL = 'https://princeofj.app.n8n.cloud/webhook-test/887441b1-2306-485e-8d87-9115c9e563d6';
     
-    return 'I can help you analyze your social media data! I specialize in:\n\n• **Trending topics** and hashtag analysis\n• **Sentiment analysis** of posts and comments\n• **Engagement metrics** and performance tracking\n• **Influencer comparisons** and benchmarking\n• **Content recommendations** based on data\n\nWhat would you like to explore first?';
+    const messageData = {
+      username: "jacks",
+      content: lowerMessage,
+      sessionID: "123123",
+      timestamp: new Date().toISOString()
+    };
+    async function getResponseFromWebhook() {
+      const result = await postToWebhook(myWebhookURL, messageData);
+      return result;
+    }
+    const gaming = await getResponseFromWebhook();
+    return JSON.parse(gaming.toString()).output;
+    //old return statement
+    //return 'I can help you analyze your social media data! I specialize in:\n\n• **Trending topics** and hashtag analysis\n• **Sentiment analysis** of posts and comments\n• **Engagement metrics** and performance tracking\n• **Influencer comparisons** and benchmarking\n• **Content recommendations** based on data\n\nWhat would you like to explore first?';
   };
 
   const handleSendMessage = async () => {
@@ -64,11 +110,11 @@ const SocialMediaAnalyticsChat = ({ userName = "" }) => {
     setInputMessage('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    setTimeout( async () => {
       const botResponse = {
         id: Date.now() + 1,
         type: 'bot',
-        content: generateResponse(messageToSend),
+        content: await generateResponse(messageToSend),
         timestamp: new Date().toISOString()
       };
       setMessages(prev => [...prev, botResponse]);
