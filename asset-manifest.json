@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/social-media-ai-chat/static/css/main.fb562a59.css",
+    "main.js": "/social-media-ai-chat/static/js/main.6de98359.js",
+    "static/js/453.9ca1ee25.chunk.js": "/social-media-ai-chat/static/js/453.9ca1ee25.chunk.js",
+    "index.html": "/social-media-ai-chat/index.html",
+    "main.fb562a59.css.map": "/social-media-ai-chat/static/css/main.fb562a59.css.map",
+    "main.6de98359.js.map": "/social-media-ai-chat/static/js/main.6de98359.js.map",
+    "453.9ca1ee25.chunk.js.map": "/social-media-ai-chat/static/js/453.9ca1ee25.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fb562a59.css",
+    "static/js/main.6de98359.js"
+  ]
+}
