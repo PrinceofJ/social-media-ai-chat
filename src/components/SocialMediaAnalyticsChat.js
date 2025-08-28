@@ -76,8 +76,8 @@ const SocialMediaAnalyticsChat = ({ userName = "" }) => {
       }
     }
     //test and then production webhook
-    const myWebhookURL = 'https://princeofj.app.n8n.cloud/webhook-test/887441b1-2306-485e-8d87-9115c9e563d6';
     //const myWebhookURL = 'https://princeofj.app.n8n.cloud/webhook-test/887441b1-2306-485e-8d87-9115c9e563d6';
+    const myWebhookURL = 'https://princeofj.app.n8n.cloud/webhook/887441b1-2306-485e-8d87-9115c9e563d6';
     
     const messageData = {
       username: "jacks",
